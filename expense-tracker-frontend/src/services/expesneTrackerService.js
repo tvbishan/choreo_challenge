@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const EXPENSE_TRACKER_SERVICE_URL = window.configs.apiUrl; //'http://localhost:3000/api'
+const EXPENSE_TRACKER_SERVICE_URL = '/choreo-apis/user-portal/expense-tracker-backend/expense-tracker-backend-4fd/v1.0';
 
 export const createExpense = async (expenseDetails) => {
   try {
