@@ -57,7 +57,7 @@ app.get('/expenses/:id', async (req, res) => {
 
 app.get('/expenses', async (req, res) => {	
     try {
-        const { email } = req.query;
+        const email = req.query.email;
 		let queryFilter = {};
 
 		// Check if email is provided
