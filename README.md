@@ -1,1 +1,1 @@
-# choreo_challenge
+# Expense Manager - Streamline Your Spending
