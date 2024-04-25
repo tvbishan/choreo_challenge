@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const EXPENSE_TRACKER_SERVICE_URL = process.env.EXPENSE_TRACKER_SERVICE_URL;//window.configs.apiUrl;
+const EXPENSE_TRACKER_SERVICE_URL = process.env.REACT_APP_EXPENSE_TRACKER_SERVICE_URL;//window.configs.apiUrl;
 
 export const createExpense = async (expenseDetails) => {
   try {
