@@ -34,7 +34,7 @@ export const getExpensesByEmail = async (email) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error while fetching expenses:', error);
+    console.error('Error while fetching expenses by user email:', error);
     throw error; // Rethrowing the error
   }
 };

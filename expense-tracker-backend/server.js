@@ -77,11 +77,11 @@ app.get('/expenses', async (req, res) => {
             return res.status(400).json({ error: 'Email parameter is required' });
         }
 
-        const response = await handleExpenseTrackerRequest('get', '/expenses', { email });
+        const response = await handleExpenseTrackerRequest('get', '/expensesByEmail', { email });
 
         res.status(response.status).send(response.data);
     } catch (error) {
-        console.error('Error occurred while fetching expenses:', error);
+        console.error('Error occurred while fetching expenses by email:', error);
         res.status(error.response ? error.response.status : 500).send(error.message);
     }
 });
