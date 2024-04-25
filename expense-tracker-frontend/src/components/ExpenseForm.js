@@ -3,6 +3,7 @@ import { expenseGroups } from '../expenseGroups';
 import { TextField, MenuItem, Button, CircularProgress } from '@mui/material';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { createExpense } from '../services/expesneTrackerService';
 
 const ExpenseForm = ({ userDetails, doOpenSnackbar, onExpenseActionSuccess }) => {
 	
@@ -62,7 +63,7 @@ const ExpenseForm = ({ userDetails, doOpenSnackbar, onExpenseActionSuccess }) =>
         };
 
         try {
-            //await bookAppointment(expenseDetails);
+            createExpense(expenseDetails);
             doOpenSnackbar('Expense recorded successfully!');
 
             onExpenseActionSuccess();
