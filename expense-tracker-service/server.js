@@ -39,71 +39,71 @@ app.get('/health', async (req, res) => {
 });
 
 app.get('/expenses/:id', async (req, res) => {
-    try {
-		const { id } = req.params;
-			
-        const expense = await Expense.findOne({ where: { id } });
+  try {
+    const { id } = req.params;
 
-        if (!expense) {
-            return res.status(404).send({ message: 'Expense not found'});
-        }
+    const expense = await Expense.findOne({ where: { id } });
 
-        res.status(200).send(expense);
-    } catch (error) {
-        console.error('Error fetching expense:', error);
-        res.status(500).send(error);
+    if (!expense) {
+      return res.status(404).send({ message: 'Expense not found' });
     }
+
+    res.status(200).send(expense);
+  } catch (error) {
+    console.error('Error fetching expense:', error);
+    res.status(500).send(error);
+  }
 });
 
-app.get('/expenses', async (req, res) => {	
-    try {
-        const email = req.query.email;
-		let queryFilter = {};
+app.get('/expenses/:email', async (req, res) => {
+  try {
+    const { email } = req.params;
+    let queryFilter = {};
 
-		// Check if email is provided
-		if (!email) {
-		  return res.status(400).json({ error: 'Email parameter is required' });
-		}
-		
-		queryFilter.email = email;
+    // Check if email is provided
+    if (!email) {
+      return res.status(400).json({ error: 'Email parameter is required' });
+    }
 
-        const expenses = await Expense.findAll({
-			where: queryFilter,
-            order: [['expenseDate', 'desc']],
-        });
+    queryFilter.email = email;
 
-        res.status(200).send(expenses);
-    } catch (error) {
-        console.error('Error occurred while fetching expenses:', error);
-        res.status(500).send(error);
-    }	
+    const expenses = await Expense.findAll({
+      where: queryFilter,
+      order: [['expenseDate', 'desc']],
+    });
+
+    res.status(200).send(expenses);
+  } catch (error) {
+    console.error('Error occurred while fetching expenses:', error);
+    res.status(500).send(error);
+  }
 });
 
 app.post('/expenses', async (req, res) => {
-    try {
-        const { amount, expenseGroup, note, expenseDate, email } = req.body;
-        const newRecord = await Expense.create({ amount, expenseGroup, note, expenseDate, email });
-        res.status(201).send(newRecord);
-    } catch (error) {
-        console.error('Error creating expense:', error);
-        res.status(500).send(error);
-    }
+  try {
+    const { amount, expenseGroup, note, expenseDate, email } = req.body;
+    const newRecord = await Expense.create({ amount, expenseGroup, note, expenseDate, email });
+    res.status(201).send(newRecord);
+  } catch (error) {
+    console.error('Error creating expense:', error);
+    res.status(500).send(error);
+  }
 });
 
 app.delete('/expenses/:id', async (req, res) => {
-    try {
-		const { id } = req.params;
-        const deletedRecord = await Expense.destroy({ where: { id: id, } });
+  try {
+    const { id } = req.params;
+    const deletedRecord = await Expense.destroy({ where: { id: id, } });
 
-        if (deletedRecord === 0) {
-            return res.status(404).send({ message: 'Expense not found'});
-        }
-
-        res.status(200).send({ message: 'Expense deleted successfully'});
-    } catch (error) {
-        console.error('Error occurred while deleting expense:', error);
-        res.status(500).send(error);
+    if (deletedRecord === 0) {
+      return res.status(404).send({ message: 'Expense not found' });
     }
+
+    res.status(200).send({ message: 'Expense deleted successfully' });
+  } catch (error) {
+    console.error('Error occurred while deleting expense:', error);
+    res.status(500).send(error);
+  }
 });
 
 // Start the server
