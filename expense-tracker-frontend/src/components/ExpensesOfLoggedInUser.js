@@ -51,7 +51,7 @@ const ExpensesOfLoggedInUser = ({ email, triggerRefresh }) => {
                         </ListItemAvatar>
                         <ListItemText
                             primary={`${expense.amount}`}
-                            secondary={`For getExpenseGroupLabel(expense.expenseGroup) on ${expense.expenseDate} - ${expense.note}`}
+                            secondary={`On ${getExpenseGroupLabel(expense.expenseGroup)} on ${expense.expenseDate} - ${expense.note}`}
                         />
                     </ListItem>
                 ))}
