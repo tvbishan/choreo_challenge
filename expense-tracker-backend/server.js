@@ -43,10 +43,12 @@ const handleExpenseTrackerRequest = async (method, url, data) => {
         },
     };
 
-    if (method === 'get') {
-        options.params = data;
-    } else {
-        options.data = data;
+    if (data){
+        if (method === 'get') {
+            options.params = data;
+        } else {
+            options.data = data;
+        }
     }
 
     return axios(options);
@@ -77,7 +79,7 @@ app.get('/expenses', async (req, res) => {
             return res.status(400).json({ error: 'Email parameter is required' });
         }
 
-        const response = await handleExpenseTrackerRequest('get', '/expensesByEmail', { email });
+        const response = await handleExpenseTrackerRequest('get', '/expensesByEmail/'+email, null);
 
         res.status(response.status).send(response.data);
     } catch (error) {
