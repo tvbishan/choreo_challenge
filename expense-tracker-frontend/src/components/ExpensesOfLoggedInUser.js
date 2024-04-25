@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { getExpensesByEmail } from '../services/expesneTrackerService';
 import { expenseGroups } from '../expenseGroups';
-import { List, ListItem, ListItemText, Typography, Paper, Avatar, ListItemAvatar, Box } from '@mui/material';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import { List, ListItem, ListItemText, Typography, Paper, Avatar, ListItemAvatar } from '@mui/material';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 
 // Convert expense groups values to labels for display
 const getExpenseGroupLabel = (expenseGroupValue) => {
@@ -46,12 +46,12 @@ const ExpensesOfLoggedInUser = ({ email, triggerRefresh }) => {
                     <ListItem key={index}>
                         <ListItemAvatar>
                             <Avatar>
-                                <CalendarTodayIcon />
+                                <AttachMoneyIcon />
                             </Avatar>
                         </ListItemAvatar>
                         <ListItemText
-                            primary={getExpenseGroupLabel(expense.expenseGroup)}
-                            secondary={`On ${expense.expenseDate} - ${expense.amount} - ${expense.note}`}
+                            primary={`${expense.amount}`}
+                            secondary={`For getExpenseGroupLabel(expense.expenseGroup) on ${expense.expenseDate} - ${expense.note}`}
                         />
                     </ListItem>
                 ))}
