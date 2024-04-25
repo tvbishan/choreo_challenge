@@ -11,17 +11,6 @@ paths:
         '200':
           description: Uptime
   /expenses:
-    get:
-      summary: List all expenses by email
-      parameters:
-        - in: query
-          name: email
-          schema:
-            type: string
-          description: Filter by user email
-      responses:
-        '200':
-          description: A list of expenses of given user
     post:
       summary: Create a new expense
       requestBody:
