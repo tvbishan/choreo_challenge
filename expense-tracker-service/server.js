@@ -55,6 +55,30 @@ app.get('/expenses/:id', async (req, res) => {
   }
 });
 
+app.get('/expensesByEmail/:email', async (req, res) => {
+  try {
+    const { email } = req.params;
+    let queryFilter = {};
+
+    // Check if email is provided
+    if (!email) {
+      return res.status(400).json({ error: 'Email parameter is required. ' + email });
+    }
+
+    queryFilter.email = email;
+
+    const expenses = await Expense.findAll({
+      where: queryFilter,
+      order: [['expenseDate', 'desc']],
+    });
+
+    res.status(200).send(expenses);
+  } catch (error) {
+    console.error('Error occurred while fetching expenses:', error);
+    res.status(500).send(error);
+  }
+});
+
 app.get('/expenses', async (req, res) => {
   try {
     const { email } = req.query;
@@ -62,7 +86,7 @@ app.get('/expenses', async (req, res) => {
 
     // Check if email is provided
     if (!email) {
-      return res.status(400).json({ error: 'Email parameter is required' });
+      return res.status(400).json({ error: 'Email parameter is required. ' + email });
     }
 
     queryFilter.email = email;

@@ -10,6 +10,20 @@ paths:
       responses:
         '200':
           description: Uptime
+  /expensesByEmail/{id}:
+    get:
+      summary: Get all expenses by email
+      parameters:
+        - in: path
+          name: email
+          required: true
+          schema:
+            type: string
+            format: email
+          description: Filter by user email
+      responses:
+        '200':
+          description: A list of expenses of given user
   /expenses/{id}:
     get:
       summary: Get a single expense by ID
@@ -46,11 +60,10 @@ paths:
           required: true
           schema:
             type: string
-            format: email
           description: Filter by user email
       responses:
         '200':
-          description: A list of expenses of given user 
+          description: A list of expenses of given user
     post:
       summary: Create a new expense
       requestBody:
