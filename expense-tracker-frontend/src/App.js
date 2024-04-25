@@ -141,7 +141,7 @@ function App() {
                         style={{ marginBottom: 20 }}
                       >
                         {" "}
-                        Hello, {userDetails.name}
+                        Hello, {userDetails.first_name}{'\u00A0'}{userDetails.last_name}
                       </Typography>
                       <ExpenseForm
                         userDetails={userDetails}
