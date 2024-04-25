@@ -55,9 +55,9 @@ app.get('/expenses/:id', async (req, res) => {
   }
 });
 
-app.get('/expenses/:email', async (req, res) => {
+app.get('/expenses', async (req, res) => {
   try {
-    const { email } = req.params;
+    const { email } = req.query;
     let queryFilter = {};
 
     // Check if email is provided
@@ -65,7 +65,7 @@ app.get('/expenses/:email', async (req, res) => {
       return res.status(400).json({ error: 'Email parameter is required' });
     }
 
-    queryFilter.email = decodeURIComponent(email);
+    queryFilter.email = email;
 
     const expenses = await Expense.findAll({
       where: queryFilter,
