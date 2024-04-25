@@ -10,10 +10,6 @@ paths:
       responses:
         '200':
           description: Uptime
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Expense'
   /expenses:
     get:
       summary: List all expenses by email
@@ -26,12 +22,6 @@ paths:
       responses:
         '200':
           description: A list of expenses of given user
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Expense'
     post:
       summary: Create a new expense
       requestBody:
@@ -61,10 +51,20 @@ paths:
       responses:
         '200':
           description: Details of an expense
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Expense'
+  /expenses/{email}:
+    get:
+      summary: List all expenses by email
+      parameters:
+        - in: path
+          name: email
+          required: true
+          schema:
+            type: string
+            format: email
+          description: Filter by user email
+      responses:
+        '200':
+          description: A list of expenses of given user              
     delete:
       summary: Delete an expense
       parameters:
@@ -83,9 +83,6 @@ components:
     Expense:
       type: object
       properties:
-        id:
-          type: integer
-          format: int64
         amount:
           type: number
           format: double
@@ -104,4 +101,4 @@ components:
         - expenseGroup
         - note
         - expenseDate
-        - email
+        - email       
