@@ -62,7 +62,7 @@ app.get('/expensesByEmail/:email', async (req, res) => {
 
     // Check if email is provided
     if (!email) {
-      return res.status(400).json({ error: 'Email parameter is required. ' + email });
+      return res.status(400).json({ error: 'Email parameter is required', email: email });
     }
 
     queryFilter.email = email;
@@ -86,7 +86,7 @@ app.get('/expenses', async (req, res) => {
 
     // Check if email is provided
     if (!email) {
-      return res.status(400).json({ error: 'Email parameter is required. ' + email });
+      return res.status(400).json({ error: 'Email parameter is required', email: email });
     }
 
     queryFilter.email = email;

@@ -10,7 +10,7 @@ paths:
       responses:
         '200':
           description: Uptime
-  /expensesByEmail/{id}:
+  /expensesByEmail/{email}:
     get:
       summary: Get all expenses by email
       parameters:
