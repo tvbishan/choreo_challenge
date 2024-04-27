@@ -33,7 +33,7 @@ function App() {
 
     if (process.env.REACT_APP_ENV === "dev") {
       // Mock the auth flow
-      const mockUserInfo = { username: "Alex", email:"alex_tct@bishan.me", first_name: "Alex", last_name: "Dev" };
+      const mockUserInfo = { username: "Alex", email:"alex_tct@bishan.me", given_name: "Alex", family_name: "Dev" };
       localStorage.setItem("userDetails", JSON.stringify(mockUserInfo));
       setUserDetails(mockUserInfo);
       setLoggedIn(true);
@@ -141,7 +141,7 @@ function App() {
                         style={{ marginBottom: 20 }}
                       >
                         {" "}
-                        Hello, {userDetails.first_name}{'\u00A0'}{userDetails.last_name}
+                        Hello, {userDetails.given_name}{'\u00A0'}{userDetails.family_name}
                       </Typography>
                       <ExpenseForm
                         userDetails={userDetails}
