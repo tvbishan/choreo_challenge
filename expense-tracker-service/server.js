@@ -164,7 +164,7 @@ app.get('/lastMonthExpenses', async (req, res) => {
       },
     });
 
-    console.log('Expenses for last month:', expenses);
+    //console.log('Expenses for last month:', expenses);
 
     res.status(200).send(expenses);
   } catch (error) {
@@ -172,6 +172,75 @@ app.get('/lastMonthExpenses', async (req, res) => {
     res.status(500).send(error);
   }
 });
+
+app.get('/todayRecordedExpenses', async (req, res) => {
+  try {
+
+    // Get start and end of the current day between 12 noon and 12 midnight
+    const todayStart = new Date();
+    todayStart.setHours(12, 0, 0, 0); // Set to 12 noon
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999); // Set to 12 midnight
+
+    console.log('startDate:', todayStart);
+    console.log('endDate:', todayEnd);
+
+    // Fetching expenses for today between 12 noon and 12 midnight using Sequelize query
+    const expenses = await Expense.findAll({
+      where: {
+        createdAt: {
+          [Sequelize.Op.between]: [todayStart, todayEnd],
+        },
+      },
+      order: [['email', 'asc'], ['expenseDate', 'asc']],
+    });
+
+    const htmlTables = generateHTMLTables(expenses, todayStart.toISOString().substring(0, 10));
+
+    res.status(200).send(htmlTables);
+  } catch (error) {
+    console.error('Error occurred while fetching today\'s expenses:', error);
+    res.status(500).send(error);
+  }
+});
+
+// Function to calculate sum of amounts
+const calculateTotalAmount = (expenses) => {
+  return expenses.reduce((total, expense) => {
+      return total + parseFloat(expense.amount);
+  }, 0);
+};
+
+// Generating HTML table for each email
+const generateHTMLTables = (data, createdAt) => {
+  const groupedExpenses = data.reduce((acc, expense) => {
+      if (!acc[expense.email]) {
+          acc[expense.email] = [];
+      }
+      acc[expense.email].push(expense);
+      return acc;
+  }, {});
+
+  let jsonOutput = [];
+
+  for (const email in groupedExpenses) {
+      const expenses = groupedExpenses[email];
+      let totalAmount = calculateTotalAmount(expenses);
+      let html = `<table style="border-collapse: collapse; width: 100%;"> <tr><th style="border: 1px solid black; padding: 10px;">Date</th><th style="border: 1px solid black; padding: 10px;">Category</th><th style="border: 1px solid black; padding: 10px;">Note</th><th style="border: 1px solid black; padding: 10px;">Amount</th></tr>`;
+      expenses.forEach((expense) => {
+          const capitalizedExpenseGroup = expense.expenseGroup.charAt(0).toUpperCase() + expense.expenseGroup.slice(1);
+          const formattedAmount = parseFloat(expense.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          html += `<tr><td style="border: 1px solid black; padding: 10px;">${expense.expenseDate}</td><td style="border: 1px solid black; padding: 10px;">${capitalizedExpenseGroup}</td><td style="border: 1px solid black; padding: 10px;">${expense.note}</td><td align="right" style="border: 1px solid black; padding: 10px;">${formattedAmount}</td></tr>`;
+      });
+      const formattedTotalAmount = totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      html += `<tr><td colspan="3" align="right" style="border: 1px solid black; padding: 10px; font-weight:bold;">Total</td><td align="right" style="border: 1px solid black; padding: 10px; font-weight:bold;">${formattedTotalAmount}</td></tr>`;
+      html += '</tbody></table>';
+      
+      jsonOutput.push({ createdAt, email, expenseData: html });
+  }
+
+  return jsonOutput;
+};
 
 // Start the server
 app.listen(PORT, () => {
