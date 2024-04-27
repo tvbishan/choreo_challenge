@@ -130,6 +130,49 @@ app.delete('/expenses/:id', async (req, res) => {
   }
 });
 
+app.get('/lastMonthExpenses', async (req, res) => {
+  try {
+
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1; // Note: January is month 0 in JavaScript
+
+    let lastMonth, lastYear;
+
+    if (currentMonth === 1) {
+      // If the current month is January, the last month would be December of the previous year
+      lastMonth = 12;
+      lastYear = currentYear - 1;
+    } else {
+      lastMonth = currentMonth - 1;
+      lastYear = currentYear;
+    }    
+
+    // Constructing the start and end dates for the last month
+    const startDate = new Date(lastYear, lastMonth - 1, 1); // 1st day of last month
+    const endDate = new Date(lastYear, lastMonth, 0); // Last day of last month
+
+    console.log('startDate:', startDate);
+    console.log('endDate:', endDate);
+
+    // Fetching expenses for the last month using Sequelize query
+    const expenses = await Expense.findAll({
+      where: {
+        expenseDate: {
+          [Sequelize.Op.between]: [startDate, endDate],
+        },
+      },
+    });
+
+    console.log('Expenses for last month:', expenses);
+
+    res.status(200).send(expenses);
+  } catch (error) {
+    console.error('Error occurred while fetching last month expenses:', error);
+    res.status(500).send(error);
+  }
+});
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);

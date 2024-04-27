@@ -10,6 +10,12 @@ paths:
       responses:
         '200':
           description: Uptime
+  /lastMonthExpenses:
+    get:
+      summary: Get previous month expenses of all users
+      responses:
+        '200':
+          description: Previous month expenses summary of all users          
   /expensesByEmail/{email}:
     get:
       summary: Get all expenses by email
