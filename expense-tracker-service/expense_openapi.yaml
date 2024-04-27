@@ -15,7 +15,13 @@ paths:
       summary: Get previous month expenses of all users
       responses:
         '200':
-          description: Previous month expenses summary of all users          
+          description: Previous month expenses summary of all users
+  /todayRecordedExpenses:
+    get:
+      summary: Get today created expenses of all users
+      responses:
+        '200':
+          description: Today created expenses summary of all users
   /expensesByEmail/{email}:
     get:
       summary: Get all expenses by email
