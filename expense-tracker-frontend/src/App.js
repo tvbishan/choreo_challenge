@@ -33,7 +33,7 @@ function App() {
 
     if (process.env.REACT_APP_ENV === "dev") {
       // Mock the auth flow
-      const mockUserInfo = { username: "john", name: "John Doe" };
+      const mockUserInfo = { username: "Alex", email:"alex_tct@bishan.me", first_name: "Alex", last_name: "Dev" };
       localStorage.setItem("userDetails", JSON.stringify(mockUserInfo));
       setUserDetails(mockUserInfo);
       setLoggedIn(true);

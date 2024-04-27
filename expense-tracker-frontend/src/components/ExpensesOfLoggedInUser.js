@@ -50,7 +50,7 @@ const ExpensesOfLoggedInUser = ({ email, triggerRefresh }) => {
                             </Avatar>
                         </ListItemAvatar>
                         <ListItemText
-                            primary={`${expense.amount}`}
+                            primary={`${expense.amount.toLocaleString()}`}
                             secondary={`On ${getExpenseGroupLabel(expense.expenseGroup)} on ${expense.expenseDate} - ${expense.note}`}
                         />
                     </ListItem>
