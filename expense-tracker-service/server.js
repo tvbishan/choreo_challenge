@@ -194,7 +194,7 @@ app.get('/todayRecordedExpenses', async (req, res) => {
       [Sequelize.Op.lte]: now,
     };
 
-    console.log('filterCondition:', filterCondition);
+    //console.log('filterCondition:', filterCondition);
 
     // Fetching expenses for today between 12 noon and 12 midnight using Sequelize query
     const expenses = await Expense.findAll({

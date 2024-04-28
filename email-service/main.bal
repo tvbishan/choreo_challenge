@@ -19,8 +19,8 @@ email:SmtpClient smtpClient = check new (smtpHost, emailAddress , emailAppPasswo
 public function main() returns error? {
     io:println("expenseApiUrl: " + expenseApiUrl);
     http:Client expensesApiEndpoint = check new (expenseApiUrl);
-    log:printInfo("expensesApiEndpoint: " + expensesApiEndpoint);  
 
+    io:println("Fetching Expenses...");
     // Fetching the expenses
     Expense[] expenses = check expensesApiEndpoint->/todayRecordedExpenses;
     io:println("Processing Expenses...");
