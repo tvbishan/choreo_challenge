@@ -202,11 +202,11 @@ app.get('/todayRecordedExpenses', async (req, res) => {
       order: [['email', 'asc'], ['expenseDate', 'asc']],
     });
 
-    const htmlTables = generateHTMLTables(expenses, todayStart.toISOString().substring(0, 10));
+    //const htmlTables = generateHTMLTables(expenses, todayStart.toISOString().substring(0, 10));
 
-    res.status(200).send(htmlTables);
+    res.status(200).send(expenses);
   } catch (error) {
-    console.error('Error occurred while fetching today\'s expenses:', error);
+    console.error('Error occurred while fetching today recorded expenses:', error);
     res.status(500).send(error);
   }
 });
