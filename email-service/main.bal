@@ -19,6 +19,7 @@ email:SmtpClient smtpClient = check new (smtpHost, emailAddress , emailAppPasswo
 public function main() returns error? {
     io:println("expenseApiUrl: " + expenseApiUrl);
     http:Client expensesApiEndpoint = check new (expenseApiUrl);
+    log:printInfo("expensesApiEndpoint: " + expensesApiEndpoint);  
 
     // Fetching the expenses
     Expense[] expenses = check expensesApiEndpoint->/todayRecordedExpenses;
@@ -36,6 +37,7 @@ public function main() returns error? {
 
 function sendEmailHtmlBody(Expense expense) returns error? {    
 
+    io:println("Processing Email of " + expense.email);
     // Generating the email content
     string htmlEmailBody = "<p>Dear User,</p><h3>Expenses submited on " + expense.createdAt + "</h3>" + expense.expenseData;
     string htmlEmailBodyFooter = "<p>&nbsp;</p><hr><p>Expense Manager - Effortlessly Organize and Monitor Your Finances.</p>";    
@@ -45,7 +47,7 @@ function sendEmailHtmlBody(Expense expense) returns error? {
         to: expense.email,
         subject: "[Expense Manager] Daily Expenses Summary - " + expense.createdAt,
         htmlBody: htmlEmailBody + htmlEmailBodyFooter
-    };    
+    };
 
     check smtpClient->sendMessage(email);
     //todo: error handling
