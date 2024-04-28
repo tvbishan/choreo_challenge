@@ -4,6 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const { Sequelize } = require('sequelize');
+const moment = require('moment-timezone');
 
 const Expense = require('./expenseModel');
 
@@ -22,6 +23,15 @@ Expense.sync()
     // Handle synchronization errors here
     console.error('Error occurred during synchronization of Expense model:', error);
   });
+
+  const getCurrentISTDateTime = () => {
+    const now = moment().tz('Asia/Kolkata');
+    const startTime = now.clone().startOf('day');
+    return {
+      startTime: startTime.format('YYYY-MM-DD HH:mm:ss'),
+      now: now.format('YYYY-MM-DD HH:mm:ss')
+    };
+  };
 
 // health check endpoint
 app.get('/health', async (req, res) => {
@@ -176,22 +186,19 @@ app.get('/lastMonthExpenses', async (req, res) => {
 app.get('/todayRecordedExpenses', async (req, res) => {
   try {
 
-    // Get start and end of the current day between 12 noon and 12 midnight
-    const todayStart = new Date();
-    todayStart.setHours(12, 0, 0, 0); // Set to 12 noon
-    const todayEnd = new Date();
-    todayEnd.setHours(23, 59, 59, 999); // Set to 12 midnight
+    let filterCondition = {};
+    const { startTime, now } = getCurrentISTDateTime();
 
-    console.log('startDate:', todayStart);
-    console.log('endDate:', todayEnd);
+    filterCondition.createdAt = {
+      [Sequelize.Op.gte]: startTime,
+      [Sequelize.Op.lte]: now,
+    };
+
+    console.log('filterCondition:', filterCondition);
 
     // Fetching expenses for today between 12 noon and 12 midnight using Sequelize query
     const expenses = await Expense.findAll({
-      where: {
-        createdAt: {
-          [Sequelize.Op.between]: [todayStart, todayEnd],
-        },
-      },
+      where: filterCondition,
       order: [['email', 'asc'], ['expenseDate', 'asc']],
     });
 
