@@ -211,39 +211,55 @@ app.get('/todayRecordedExpenses', async (req, res) => {
   }
 });
 
-// Function to calculate sum of amounts
-const calculateTotalAmount = (expenses) => {
-  return expenses.reduce((total, expense) => {
-      return total + parseFloat(expense.amount);
-  }, 0);
-};
+app.get('/todayRecordedExpensesFormatted', async (req, res) => {
+  try {
 
-// Generating HTML table for each email
+    let filterCondition = {};
+    const { startTime, now } = getCurrentISTDateTime();
+
+    filterCondition.createdAt = {
+      [Sequelize.Op.gte]: startTime,
+      [Sequelize.Op.lte]: now,
+    };
+
+    //console.log('filterCondition:', filterCondition);
+
+    // Fetching expenses for today between 12 noon and 12 midnight using Sequelize query
+    const expenses = await Expense.findAll({
+      where: filterCondition,
+      order: [['email', 'asc'], ['expenseDate', 'asc']],
+    });
+
+    const htmlTables = generateHTMLTables(expenses, startTime.substring(0, 10));
+
+    res.status(200).send(htmlTables);
+  } catch (error) {
+    console.error('Error occurred while fetching today recorded expenses:', error);
+    res.status(500).send(error);
+  }
+});
+
 const generateHTMLTables = (data, createdAt) => {
-  const groupedExpenses = data.reduce((acc, expense) => {
-      if (!acc[expense.email]) {
-          acc[expense.email] = [];
+  const groupedExpenses = new Map();
+
+  data.forEach(expense => {
+      const { email, expenseDate, expenseGroup, note, amount } = expense;
+      const formattedAmount = parseFloat(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      if (!groupedExpenses.has(email)) {
+          groupedExpenses.set(email, { html: [], totalAmount: 0 });
       }
-      acc[expense.email].push(expense);
-      return acc;
-  }, {});
 
-  let jsonOutput = [];
+      groupedExpenses.get(email).html.push(`<tr><td style="border: 1px solid black; padding: 10px;">${expenseDate}</td><td style="border: 1px solid black; padding: 10px;">${expenseGroup.charAt(0).toUpperCase() + expenseGroup.slice(1)}</td><td style="border: 1px solid black; padding: 10px;">${note}</td><td align="right" style="border: 1px solid black; padding: 10px;">${formattedAmount}</td></tr>`);
+      groupedExpenses.get(email).totalAmount += parseFloat(amount);
+  });
 
-  for (const email in groupedExpenses) {
-      const expenses = groupedExpenses[email];
-      let totalAmount = calculateTotalAmount(expenses);
-      let html = `<table style="border-collapse: collapse; width: 100%;"> <tr><th style="border: 1px solid black; padding: 10px;">Date</th><th style="border: 1px solid black; padding: 10px;">Category</th><th style="border: 1px solid black; padding: 10px;">Note</th><th style="border: 1px solid black; padding: 10px;">Amount</th></tr>`;
-      expenses.forEach((expense) => {
-          const capitalizedExpenseGroup = expense.expenseGroup.charAt(0).toUpperCase() + expense.expenseGroup.slice(1);
-          const formattedAmount = parseFloat(expense.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-          html += `<tr><td style="border: 1px solid black; padding: 10px;">${expense.expenseDate}</td><td style="border: 1px solid black; padding: 10px;">${capitalizedExpenseGroup}</td><td style="border: 1px solid black; padding: 10px;">${expense.note}</td><td align="right" style="border: 1px solid black; padding: 10px;">${formattedAmount}</td></tr>`;
-      });
+  const jsonOutput = [];
+  for (const [email, { html, totalAmount }] of groupedExpenses) {
+      const tableRows = html.join('');
       const formattedTotalAmount = totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      html += `<tr><td colspan="3" align="right" style="border: 1px solid black; padding: 10px; font-weight:bold;">Total</td><td align="right" style="border: 1px solid black; padding: 10px; font-weight:bold;">${formattedTotalAmount}</td></tr>`;
-      html += '</tbody></table>';
-      
-      jsonOutput.push({ createdAt, email, expenseData: html });
+      const tableHtml = `<table style="border-collapse: collapse; width: 100%;"><tr><th style="border: 1px solid black; padding: 10px;">Date</th><th style="border: 1px solid black; padding: 10px;">Category</th><th style="border: 1px solid black; padding: 10px;">Note</th><th style="border: 1px solid black; padding: 10px;">Amount</th></tr>${tableRows}<tr><td colspan="3" align="right" style="border: 1px solid black; padding: 10px; font-weight:bold;">Total</td><td align="right" style="border: 1px solid black; padding: 10px; font-weight:bold;">${formattedTotalAmount}</td></tr></tbody></table>`;
+      jsonOutput.push({ createdAt, email, expenseData: tableHtml });
   }
 
   return jsonOutput;

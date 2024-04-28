@@ -22,7 +22,7 @@ public function main() returns error? {
 
     io:println("Fetching Expenses...");
     // Fetching the expenses
-    Expense[] expenses = check expensesApiEndpoint->/todayRecordedExpenses;
+    Expense[] expenses = check expensesApiEndpoint->/todayRecordedExpensesFormatted;
     io:println("Processing Expenses...");
 
     foreach Expense expense in expenses {
